@@ -66,8 +66,8 @@ def other_dependency(lib: str):
     """
 
     try:
-        import_cmd = 'python3 -c "import {}"'.format(lib)
-        subprocess.run([import_cmd], shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        import_cmd_args = [sys.executable,'-c','import {}'.format(lib)]
+        subprocess.run([import_cmd_args], shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     except:
         cmd_args = [sys.executable,'-m','pip','install','--user',lib]
         subprocess.run(cmd_args, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
