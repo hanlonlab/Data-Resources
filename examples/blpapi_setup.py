@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 # coding: utf-8
 
+import sys
 import subprocess
 
 
@@ -14,8 +15,8 @@ def blpapi_dependency():
     try:
         import blpapi
     except:
-        blpapi_cmd = 'python3 -m pip install --user --index-url=https://bcms.bloomberg.com/pip/simple blpapi'
-        subprocess.run([blpapi_cmd], shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        cmd_args = [sys.executable,'-m','pip','install','--user','--index-url=https://bcms.bloomberg.com/pip/simple','blpapi']
+        subprocess.run(cmd_args, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
 
 def xbbg_dependency():
@@ -28,8 +29,8 @@ def xbbg_dependency():
     try:
         from xbbg import blp
     except:
-        xbbg_cmd = 'python3 -m pip install --user xbbg'
-        subprocess.run([xbbg_cmd], shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        cmd_args = [sys.executable,'-m','pip','install','--user','xbbg']
+        subprocess.run(cmd_args, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
 
 def pandas_dependency():
@@ -40,8 +41,8 @@ def pandas_dependency():
     try:
         import pandas as pd
     except:
-        pandas_cmd = 'python3 -m pip install --user pandas'
-        subprocess.run([pandas_cmd], shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        cmd_args = [sys.executable,'-m','pip','install','--user','pandas']
+        subprocess.run(cmd_args, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
 
 def plotly_dependency():
@@ -52,8 +53,8 @@ def plotly_dependency():
     try:
         import plotly
     except:
-        plotly_cmd = 'python3 -m pip install --user pandas'
-        subprocess.run([plotly_cmd], shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        cmd_args = [sys.executable,'-m','pip','install','--user','plotly']
+        subprocess.run(cmd_args, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
 
 def other_dependency(lib: str):
@@ -68,8 +69,8 @@ def other_dependency(lib: str):
         import_cmd = 'python3 -c "import {}"'.format(lib)
         subprocess.run([import_cmd], shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     except:
-        pip_cmd = 'python3 -m pip install --user {}'.format(lib)
-        subprocess.run([pip_cmd], shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        cmd_args = [sys.executable,'-m','pip','install','--user',lib]
+        subprocess.run(cmd_args, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
 
 if __name__ == "__main__":
