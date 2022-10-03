@@ -30,7 +30,7 @@ def download_idx_membership(settings: dict = IDX_PARAMS) -> pd.DataFrame:
     :rtype: pandas.DataFrame
     """
 
-    blp.bdh(**settings)
+    return blp.bdh(**settings)
 
 
 if __name__ == "__main__":

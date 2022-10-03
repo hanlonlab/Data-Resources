@@ -34,7 +34,7 @@ def download_px_cap_data(settings: dict = PXM_PARAMS) -> pd.DataFrame:
     :rtype: pandas.DataFrame
     """
 
-    blp.bdh(**settings)
+    return blp.bdh(**settings)
 
 
 if __name__ == "__main__":

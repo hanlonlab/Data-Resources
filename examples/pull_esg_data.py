@@ -33,7 +33,7 @@ def download_esg_data(settings: dict = ESG_PARAMS) -> pd.DataFrame:
     :rtype: pandas.DataFrame
     """
 
-    blp.bdp(**settings)
+    return blp.bdp(**settings)
 
 
 

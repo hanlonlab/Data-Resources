@@ -41,7 +41,7 @@ def download_metadata(settings: dict = BDP_PARAMS) -> pd.DataFrame:
     :rtype: pandas.DataFrame
     """
 
-    blp.bdp(**settings)
+    return blp.bdp(**settings)
 
 
 if __name__ == "__main__":

@@ -35,7 +35,7 @@ def download_tick_history(settings: dict = BDH_PARAMS) -> pd.DataFrame:
     :rtype: pandas.DataFrame
     """
 
-    blp.bdh(**settings)
+    return blp.bdh(**settings)
 
 
 if __name__ == "__main__":

@@ -33,7 +33,7 @@ def download_div_data(settings: dict = DIV_PARAMS) -> pd.DataFrame:
     :rtype: pandas.DataFrame
     """
 
-    blp.bdh(**settings)
+    return blp.bdh(**settings)
 
 
 if __name__ == "__main__":
