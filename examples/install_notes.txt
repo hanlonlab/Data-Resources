@@ -1,6 +1,0 @@
-Packages to add to venv: 
-
-1) To run the bloomberg download scripts, open an "Anaconda Prompt" and install the xbbg and blpapi packages with: 
-
-$ pip install xbbg 
-$ pip install --index-url=https://bcms.bloomberg.com/pip/simple blpapi
