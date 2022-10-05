@@ -45,18 +45,6 @@ def pandas_dependency():
         subprocess.run(cmd_args, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
 
-def plotly_dependency():
-    r"""
-    If importing the plotly library fails, download it using python3's pip module.
-    """
-
-    try:
-        import plotly
-    except:
-        cmd_args = [sys.executable,'-m','pip','install','--user','plotly']
-        subprocess.run(cmd_args, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-
-
 def other_dependency(lib: str):
     r"""
     If importing a module or library fails, download it using by name using python3's pip module. Note this pattern may not work for every importable object.
@@ -79,4 +67,3 @@ if __name__ == "__main__":
     blpapi_dependency()
     xbbg_dependency()
     pandas_dependency()
-    plotly_dependency()

@@ -43,4 +43,4 @@ if __name__ == "__main__":
     idx_members.to_csv(TMP_DIR + filename)
 
     # Print the first 3 records from the DataFrame to stdout.
-    print('Sample of downloaded index membership data:\n',idx_members.head(3),'\n')
+    print('Sample of downloaded index membership data:\n',idx_members.head(10),'\n')
