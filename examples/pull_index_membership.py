@@ -22,15 +22,15 @@ IDX_PARAMS = {
 
 def download_idx_membership(settings: dict = IDX_PARAMS) -> pd.DataFrame:
     r"""
-    Download from the Bloomberg API using the BDH() function. For the purposes of our example we expect the settings dict to contain values describing a request for index membership data, but strictly speaking this is not required.
+    Download from the Bloomberg API using the BDS() function. For the purposes of our example we expect the settings dict to contain values describing a request for index membership data, but strictly speaking this is not required.
 
-    :param settings: A dictionary with parameters for a call to Bloomberg BDH function, with keys matching the BDH parameter names
+    :param settings: A dictionary with parameters for a call to Bloomberg BDS function, with keys matching the BDS parameter names
     :type settings: dict 
     :return: DataFrame containing data returned by Bloomberg
     :rtype: pandas.DataFrame
     """
 
-    return blp.bdh(**settings)
+    return blp.bds(**settings)
 
 
 if __name__ == "__main__":
