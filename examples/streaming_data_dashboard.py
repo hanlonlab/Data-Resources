@@ -10,8 +10,8 @@ from xbbg import blp
 import asyncio
 import json
 import pandas as pd
-import matplotlib.pyplot as plt
-import matplotlib.animation as animation
+
+import streamlit
 
 
 # A directory for files that are not tracked by git, to which we'll download data
@@ -97,11 +97,14 @@ async def viz_ticks(settings: dict = LIVE_PARAMS, max: int = MAX_RECORDS):
 
     count = 0
     async for tick in blp.live(**settings):
+
+        # print tick
         try:
             print(json.dumps(tick, indent=4, default=str))
         except:
             print(tick)
         
+        # fill and cycle bid, ask, trade lists with live data
         ticker = tick['TICKER'].split()[0]
         event_type = tick['MKTDATA_EVENT_TYPE']
         event_subtype = tick['MKTDATA_EVENT_SUBTYPE']
@@ -135,27 +138,11 @@ async def viz_ticks(settings: dict = LIVE_PARAMS, max: int = MAX_RECORDS):
                 trd.pop(0)
         else:
             pass
-
-        if count == MIN_TO_VIZ:
-            print(pd.DataFrame(trd))
-
-            fig = plt.figure()
-            axis = fig.add_subplot(1, 1, 1)
-
-            data = pd.DataFrame(trd)
-            xset = data['timestamp']
-            yset = data['usd']
-            axis.plot(xset,yset)
-
-        elif count > MIN_TO_VIZ:
-            print(pd.DataFrame(trd))
-
-            data = pd.DataFrame(trd)
-            xset = data['timestamp']
-            yset = data['usd']
-            axis.plot(xset,yset)
             
-        plt.show()
+        # visualize
+
+        data = pd.DataFrame(trd)
+
         count += 1
         if count >= max: break
 

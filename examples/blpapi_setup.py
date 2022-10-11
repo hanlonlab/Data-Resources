@@ -67,3 +67,4 @@ if __name__ == "__main__":
     blpapi_dependency()
     xbbg_dependency()
     pandas_dependency()
+    other_dependency('streamlit')
