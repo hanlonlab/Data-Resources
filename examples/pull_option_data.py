@@ -37,9 +37,10 @@ def filter_option_tickers(settings: dict = OPT_PARAMS, day_filter: int = MAX_DAY
     :rtype: list
     """
 
+    
     print(blp.bds(tickers=settings['tickers'], flds=['PX_LAST']))
 
-    #print(blp.bds(tickers=settings['tickers'], flds=['OPT_CHAIN']))
+    print(blp.bds(tickers=settings['tickers'], flds=['OPT_CHAIN']))
 
 
 def download_option_data(settings: dict = OPT_PARAMS) -> pd.DataFrame:
