@@ -89,11 +89,9 @@ if __name__ == "__main__":
     # Using the OPT_PARAMS, download historical equity and option price data using BDH
     bid_ask_vol_data = download_option_data(OPT_PARAMS)
 
-    print(bid_ask_vol_data)
-
     # Download the last traded price & market cap dataset to a CSV file, using pandas.DataFrame's to_csv() method
     filename = 'bid_ask_vol_' + OPT_PARAMS['start_date'] + '_' + OPT_PARAMS['end_date'] + '.csv'
     bid_ask_vol_data.to_csv(TMP_DIR + filename)
 
     # Print the first 3 records from the DataFrame to stdout.
-    print('\nSample of bid-ask-vol equity & options data:\n',bid_ask_vol_data.head(3),'\n')
+    print('\nSample of bid-ask-vol equity & options data:\n',bid_ask_vol_data.tail(3),'\n')
