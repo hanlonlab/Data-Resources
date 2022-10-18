@@ -36,10 +36,12 @@ def filter_option_tickers(settings: dict = OPT_PARAMS, day_filter: int = MAX_DAY
     :return: list of filtered tickers for which option data is needed
     :rtype: list
     """
-    px_last_vals = blp.bds(tickers=settings['tickers'], flds=['PX_LAST']).to_dict()
+    px_last_vals = blp.bds(tickers=settings['tickers'], flds=['PX_LAST'])
     
     for ticker in settings['tickers']:
-        last_price = float(px_last_vals['value'][ticker])
+        print(px_last_vals[px_last_vals.columns[0]])
+
+        #last_price = float(px_last_vals[px_last_vals.columns[0]])
         
         print(blp.bds(tickers=settings['tickers'], flds=['OPT_CHAIN']))
 
