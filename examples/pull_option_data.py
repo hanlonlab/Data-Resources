@@ -19,12 +19,12 @@ OPT_PARAMS = {
         'AAPL US Equity'
         ],
     'flds' : [
-        'PX_BID'#,
-        #'PX_ASK',
-        #'PX_VOLUME'
+        'PX_BID',
+        'PX_ASK',
+        'PX_VOLUME'
         ],
-    'start_date' : '2020-03-01',
-    'end_date' : '2020-03-31'
+    'start_date' : '2022-07-01',
+    'end_date' : '2022-12-31'
 }
 
 
