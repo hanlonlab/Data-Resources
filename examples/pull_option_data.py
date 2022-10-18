@@ -37,14 +37,15 @@ def filter_option_tickers(settings: dict = OPT_PARAMS, day_filter: int = MAX_DAY
     :return: list of filtered tickers for which option data is needed
     :rtype: list
     """
+
+    # get a DataFrame with PX_LAST from BDS using tickers - note tickers will comprise the index
     px_last_vals = blp.bds(tickers=settings['tickers'], flds=['PX_LAST'])
     
     for ticker in settings['tickers']:
-        print(px_last_vals.filter(items=[ticker],axis=0).iloc[0]['value'])
+        # filter the PX_LAST DataFrame by ticker within the index, grab the first row from the resulting one-row DataFrame, extract value of column named "value"
+        last_price = px_last_vals.filter(items=[ticker],axis=0).iloc[0]['value']
 
-        #last_price = float(px_last_vals[px_last_vals.columns[0]])
-        
-        #print(blp.bds(tickers=settings['tickers'], flds=['OPT_CHAIN']))
+        print(blp.bds(tickers=[ticker], flds=['OPT_CHAIN']))
 
 
 def download_option_data(settings: dict = OPT_PARAMS) -> pd.DataFrame:
