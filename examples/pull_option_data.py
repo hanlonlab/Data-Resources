@@ -49,6 +49,7 @@ def filter_securities(settings: dict = OPT_PARAMS, max_days: int = MAX_DAYS, per
         high_strike = last_price * (1.0 + per_money)
 
         # get options by ticker as list
+        print(blp.bds(tickers=[ticker], flds=['OPT_CHAIN']))
         ticker_opt_chain = blp.bds(tickers=[ticker], flds=['OPT_CHAIN'])['security_description'].tolist()
         
         filtered_opts = []
