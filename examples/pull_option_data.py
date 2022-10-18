@@ -28,7 +28,7 @@ OPT_PARAMS = {
 }
 
 
-def filter_option_tickers(settings: dict = OPT_PARAMS, day_filter: int = MAX_DAYS, per_money_filter: int = PER_MONEY) -> list:
+def filter_option_tickers(settings: dict = OPT_PARAMS, max_days: int = MAX_DAYS, per_money: int = PER_MONEY) -> list:
     r"""
     Get and filter option tickers using scripts parameters.
 
@@ -44,6 +44,9 @@ def filter_option_tickers(settings: dict = OPT_PARAMS, day_filter: int = MAX_DAY
     for ticker in settings['tickers']:
         # filter the PX_LAST DataFrame by ticker within the index, grab the first row from the resulting one-row DataFrame, extract value of column named "value"
         last_price = px_last_vals.filter(items=[ticker],axis=0).iloc[0]['value']
+
+        low_stock = last_price * (1 - per_money)
+        high_stock = last_price * (1 + per_money)
 
         print(blp.bds(tickers=[ticker], flds=['OPT_CHAIN']))
 
