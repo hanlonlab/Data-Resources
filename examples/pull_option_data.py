@@ -9,6 +9,7 @@ import pandas as pd
 # A directory for files that are not tracked by git, to which we'll download data
 TMP_DIR = '../tmp/'
 
+# Strike price filters
 MAX_DAYS = 140
 PER_MONEY = 0.3
 

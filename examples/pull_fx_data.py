@@ -4,6 +4,8 @@
 import blpapi
 from xbbg import blp
 import pandas as pd
+import datetime
+import itertools
 
 
 # A directory for files that are not tracked by git, to which we'll download data
@@ -38,7 +40,16 @@ def download_fx_intraday_data(settings: dict = FX_PARAMS) -> pd.DataFrame:
 
 if __name__ == "__main__":
 
-    # Use the default PXM_PARAMS to download metadata for a small number of tickers
+    # combine G10 currencies into pairs by filtering the G10 X G10 Cartesian product using list comprehension
+    currency_pairs = sorted([[a,b] for a,b in itertools.product(FX_PARAMS['tickers'], repeat=2) if a!=b])[26:]
+
+    # get dates to use when filtering our BDH call
+    anchor_date = pd.tseries.offsets.BDay(-1).apply(pd.datetime.now())
+    start_date = pd.datetime.combine(anchor_date - datetime.timedelta(days=365), datetime.time(13, 30))
+    end_date = pd.datetime.combine(anchor_date, datetime.time(14, 30))
+
+
+    # Use the default FX_PARAMS to download metadata for a small number of tickers
     fx_intraday_data = download_fx_intraday_data()
 
     # Download the last traded price & market cap dataset to a CSV file, using pandas.DataFrame's to_csv() method
