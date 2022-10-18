@@ -28,7 +28,7 @@ OPT_PARAMS = {
 }
 
 
-def filter_option_tickers(settings: dict = OPT_PARAMS, max_days: int = MAX_DAYS, per_money: int = PER_MONEY) -> list:
+def filter_option_tickers(settings: dict = OPT_PARAMS, max_days: int = MAX_DAYS, per_money: float = PER_MONEY) -> list:
     r"""
     Get and filter option tickers using scripts parameters.
 
@@ -43,20 +43,29 @@ def filter_option_tickers(settings: dict = OPT_PARAMS, max_days: int = MAX_DAYS,
     
     for ticker in settings['tickers']:
         # filter the PX_LAST DataFrame by ticker within the index, grab the first row from the resulting one-row DataFrame, extract value of column named "value"
-        last_price = px_last_vals.filter(items=[ticker],axis=0).iloc[0]['value']
+        last_price = float(px_last_vals.filter(items=[ticker],axis=0).iloc[0]['value'])
 
-        low_stock = last_price * (1 - per_money)
-        high_stock = last_price * (1 + per_money)
+        low_strike = last_price * (1.0 - per_money)
+        high_strike = last_price * (1.0 + per_money)
 
         # get options by ticker as list
         ticker_opt_chain = blp.bds(tickers=[ticker], flds=['OPT_CHAIN'])['security_description'].tolist()
         
+        filtered_opts = []
+
         for sym in ticker_opt_chain[:10]:
             print(pd.to_datetime(sym.split(' ')[2]))
             print(pd.to_datetime('today'))
             days_to_expiration = pd.to_datetime(sym.split(' ')[2]) - pd.to_datetime('today')
             print(days_to_expiration)
 
+            strike_price = float(sym.split(' ')[-2][1:])
+            strike_in_window = (strike_price > low_strike) and (strike_price < high_strike)
+   
+            if int(days_to_expiration.days) < max_days and strike_in_window:
+                filtered_opts.append(sym)
+    
+    return (settings['tickers'] + filtered_opts)
 
 
 def download_option_data(settings: dict = OPT_PARAMS) -> pd.DataFrame:
@@ -74,7 +83,7 @@ def download_option_data(settings: dict = OPT_PARAMS) -> pd.DataFrame:
 
 if __name__ == "__main__":
 
-    filter_option_tickers()
+    print(filter_option_tickers(OPT_PARAMS, max_days = MAX_DAYS, per_money = PER_MONEY))
 
     # # Use the default PXM_PARAMS to download metadata for a small number of tickers
     # fx_intraday_data = download_fx_intraday_data()
