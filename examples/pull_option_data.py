@@ -54,15 +54,14 @@ def filter_option_tickers(settings: dict = OPT_PARAMS, max_days: int = MAX_DAYS,
         filtered_opts = []
 
         for sym in ticker_opt_chain[:10]:
-            print(pd.to_datetime(sym.split(' ')[2]))
-            print(pd.to_datetime('today'))
-            days_to_expiration = pd.to_datetime(sym.split(' ')[2]) - pd.to_datetime('today')
-            print(days_to_expiration)
 
+            # split options of the form "AAPL US 02/17/23 P175 Equity" to pull days to expiration and strike price
+            days_to_expiration = int((pd.to_datetime(sym.split(' ')[2]) - pd.to_datetime('today')).days)
             strike_price = float(sym.split(' ')[-2][1:])
+
+            # if option within expiration and strike windows, append to filter list
             strike_in_window = (strike_price > low_strike) and (strike_price < high_strike)
-   
-            if int(days_to_expiration.days) < max_days and strike_in_window:
+            if days_to_expiration < max_days and strike_in_window:
                 filtered_opts.append(sym)
     
     return (settings['tickers'] + filtered_opts)
@@ -77,6 +76,8 @@ def download_option_data(settings: dict = OPT_PARAMS) -> pd.DataFrame:
     :return: DataFrame containing data returned by Bloomberg
     :rtype: pandas.DataFrame
     """
+
+    filter_option_tickers(OPT_PARAMS, max_days = MAX_DAYS, per_money = PER_MONEY)
 
     return blp.bdh(**settings)
 
