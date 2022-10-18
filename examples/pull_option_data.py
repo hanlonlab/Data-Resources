@@ -80,6 +80,10 @@ def download_option_data(settings: dict = OPT_PARAMS) -> pd.DataFrame:
     # add filtered securities list to the dict containing BDH parameters
     settings['tickers'] = filter_securities(OPT_PARAMS, max_days = MAX_DAYS, per_money = PER_MONEY)
 
+    print(filter_securities(OPT_PARAMS, max_days = MAX_DAYS, per_money = PER_MONEY))
+
+    print(settings['tickers'])
+
     return blp.bdh(**settings)
 
 
