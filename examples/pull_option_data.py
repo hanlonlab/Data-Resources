@@ -96,4 +96,4 @@ if __name__ == "__main__":
     bid_ask_vol_data.to_csv(TMP_DIR + filename)
 
     # Print the first 3 records from the DataFrame to stdout.
-    print('Sample of bid-ask-vol equity & options data:\n',bid_ask_vol_data.head(3),'\n')
+    print('\nSample of bid-ask-vol equity & options data:\n',bid_ask_vol_data.head(3),'\n')
