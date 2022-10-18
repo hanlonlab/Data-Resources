@@ -81,23 +81,19 @@ def download_option_data(settings: dict = OPT_PARAMS) -> pd.DataFrame:
     # add filtered securities list to the dict containing BDH parameters
     settings['tickers'] = filter_securities(OPT_PARAMS, max_days = MAX_DAYS, per_money = PER_MONEY)
 
-    print(settings['tickers'])
-
     return blp.bdh(**settings)
 
 
 if __name__ == "__main__":
 
+    # Using the OPT_PARAMS, download historical equity and option price data using BDH
     bid_ask_vol_data = download_option_data(OPT_PARAMS)
 
     print(bid_ask_vol_data)
 
-    # # Use the default PXM_PARAMS to download metadata for a small number of tickers
-    # fx_intraday_data = download_fx_intraday_data()
+    # Download the last traded price & market cap dataset to a CSV file, using pandas.DataFrame's to_csv() method
+    filename = 'bid_ask_vol_' + OPT_PARAMS['start_date'] + '_' + OPT_PARAMS['end_date'] + '.csv'
+    bid_ask_vol_data.to_csv(TMP_DIR + filename)
 
-    # # Download the last traded price & market cap dataset to a CSV file, using pandas.DataFrame's to_csv() method
-    # filename = 'fx_intraday_' + OPT_PARAMS['start_date'] + '_' + OPT_PARAMS['end_date'] + '.csv'
-    # fx_intraday_data.to_csv(TMP_DIR + filename)
-
-    # # Print the first 3 records from the DataFrame to stdout.
-    # print('Sample of fx intraday data:\n',fx_intraday_data.head(3),'\n')
+    # Print the first 3 records from the DataFrame to stdout.
+    print('Sample of bid-ask-vol equity & options data:\n',bid_ask_vol_data.head(3),'\n')
