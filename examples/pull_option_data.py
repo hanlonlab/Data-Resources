@@ -49,7 +49,7 @@ def filter_option_tickers(settings: dict = OPT_PARAMS, max_days: int = MAX_DAYS,
         high_stock = last_price * (1 + per_money)
 
         ticker_opt_chain = blp.bds(tickers=[ticker], flds=['OPT_CHAIN'])
-        print(ticker_opt_chain['security_description'])
+        print(ticker_opt_chain['security_description'].tolist())
 
 
 
