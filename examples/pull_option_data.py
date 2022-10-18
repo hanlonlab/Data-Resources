@@ -40,6 +40,8 @@ def filter_securities(settings: dict = OPT_PARAMS, max_days: int = MAX_DAYS, per
 
     # get a DataFrame with PX_LAST from BDS using tickers - note tickers will comprise the index
     px_last_vals = blp.bds(tickers=settings['tickers'], flds=['PX_LAST'])
+
+    print(settings['tickers'])
     
     for ticker in settings['tickers']:
         # filter the PX_LAST DataFrame by ticker within the index, grab the first row from the resulting one-row DataFrame, extract value of column named "value"
