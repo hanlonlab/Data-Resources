@@ -28,7 +28,7 @@ OPT_PARAMS = {
 }
 
 
-def filter_option_tickers(settings: dict = OPT_PARAMS, max_days: int = MAX_DAYS, per_money: float = PER_MONEY) -> list:
+def filter_securities(settings: dict = OPT_PARAMS, max_days: int = MAX_DAYS, per_money: float = PER_MONEY) -> list:
     r"""
     Get and filter option tickers using scripts parameters.
 
@@ -77,14 +77,17 @@ def download_option_data(settings: dict = OPT_PARAMS) -> pd.DataFrame:
     :rtype: pandas.DataFrame
     """
 
-    filter_option_tickers(OPT_PARAMS, max_days = MAX_DAYS, per_money = PER_MONEY)
+    # add filtered securities list to the dict containing BDH parameters
+    settings['tickers'] = filter_securities(OPT_PARAMS, max_days = MAX_DAYS, per_money = PER_MONEY)
 
     return blp.bdh(**settings)
 
 
 if __name__ == "__main__":
 
-    print(filter_option_tickers(OPT_PARAMS, max_days = MAX_DAYS, per_money = PER_MONEY))
+    bid_ask_vol_data = download_option_data(OPT_PARAMS)
+
+    print(bid_ask_vol_data)
 
     # # Use the default PXM_PARAMS to download metadata for a small number of tickers
     # fx_intraday_data = download_fx_intraday_data()
