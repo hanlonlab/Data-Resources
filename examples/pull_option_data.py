@@ -41,7 +41,6 @@ def filter_securities(settings: dict = OPT_PARAMS, max_days: int = MAX_DAYS, per
     # get a DataFrame with PX_LAST from BDS using tickers - note tickers will comprise the index
     px_last_vals = blp.bds(tickers=settings['tickers'], flds=['PX_LAST'])
 
-    print(settings['tickers'])
     
     for ticker in settings['tickers']:
         # filter the PX_LAST DataFrame by ticker within the index, grab the first row from the resulting one-row DataFrame, extract value of column named "value"
@@ -51,7 +50,6 @@ def filter_securities(settings: dict = OPT_PARAMS, max_days: int = MAX_DAYS, per
         high_strike = last_price * (1.0 + per_money)
 
         # get options by ticker as list
-        print(blp.bds(tickers=[ticker], flds=['OPT_CHAIN']))
         ticker_opt_chain = blp.bds(tickers=[ticker], flds=['OPT_CHAIN'])['security_description'].tolist()
         
         filtered_opts = []
@@ -82,8 +80,6 @@ def download_option_data(settings: dict = OPT_PARAMS) -> pd.DataFrame:
 
     # add filtered securities list to the dict containing BDH parameters
     settings['tickers'] = filter_securities(OPT_PARAMS, max_days = MAX_DAYS, per_money = PER_MONEY)
-
-    print(filter_securities(OPT_PARAMS, max_days = MAX_DAYS, per_money = PER_MONEY))
 
     print(settings['tickers'])
 
