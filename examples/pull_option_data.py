@@ -48,8 +48,14 @@ def filter_option_tickers(settings: dict = OPT_PARAMS, max_days: int = MAX_DAYS,
         low_stock = last_price * (1 - per_money)
         high_stock = last_price * (1 + per_money)
 
-        ticker_opt_chain = blp.bds(tickers=[ticker], flds=['OPT_CHAIN'])
-        print(ticker_opt_chain['security_description'].tolist())
+        # get options by ticker as list
+        ticker_opt_chain = blp.bds(tickers=[ticker], flds=['OPT_CHAIN'])['security_description'].tolist()
+        
+        for sym in ticker_opt_chain[:10]:
+            print(pd.to_datetime(sym.split(' ')[2]))
+            print(pd.to_datetime('today'))
+            days_to_expiration = pd.to_datetime(sym.split(' ')[2]) - pd.to_datetime('today')
+            print(days_to_expiration)
 
 
 
