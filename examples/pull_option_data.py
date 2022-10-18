@@ -40,7 +40,7 @@ def filter_option_tickers(settings: dict = OPT_PARAMS, day_filter: int = MAX_DAY
     px_last_vals = blp.bds(tickers=settings['tickers'], flds=['PX_LAST'])
     
     for ticker in settings['tickers']:
-        print(px_last_vals.loc[df.columns[0] == ticker])
+        print(px_last_vals.loc[px_last_vals.columns[0] == ticker])
 
         #last_price = float(px_last_vals[px_last_vals.columns[0]])
         
