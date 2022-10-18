@@ -39,9 +39,9 @@ def filter_option_tickers(settings: dict = OPT_PARAMS, day_filter: int = MAX_DAY
     px_last_vals = blp.bds(tickers=settings['tickers'], flds=['PX_LAST']).to_dict()
     
     for ticker in settings['tickers']:
-        print(px_last_vals['value'][ticker])
-        #print(px_last_vals.loc(px_last_vals.iloc[:,[0]] == ticker))
-        print(blp.bds(tickers=settings['tickers'], flds=['OPT_CHAIN']))
+        last_price = float(px_last_vals['value'][ticker])
+        
+        print(blp.bds(tickers=settings['tickers'], flds=['OPT_CHAIN']).to_dict())
 
 
 def download_option_data(settings: dict = OPT_PARAMS) -> pd.DataFrame:
