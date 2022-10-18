@@ -15,7 +15,8 @@ PER_MONEY = 0.3
 # Start date, end date, tickers, codes for the last traded price & market cap fields we want to download from Bloomberg's API using the BDH function
 OPT_PARAMS = {
     'tickers' : [
-        'AGG US Equity'
+        'AGG US Equity',
+        'AAPL US Equity'
         ],
     'flds' : [
         'PX_BID',
