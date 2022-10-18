@@ -48,7 +48,9 @@ def filter_option_tickers(settings: dict = OPT_PARAMS, max_days: int = MAX_DAYS,
         low_stock = last_price * (1 - per_money)
         high_stock = last_price * (1 + per_money)
 
-        print(blp.bds(tickers=[ticker], flds=['OPT_CHAIN']))
+        ticker_opt_chain = blp.bds(tickers=[ticker], flds=['OPT_CHAIN'])
+        print(ticker_opt_chain['security_description'])
+
 
 
 def download_option_data(settings: dict = OPT_PARAMS) -> pd.DataFrame:
