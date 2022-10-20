@@ -19,9 +19,7 @@ FX_PARAMS = {
     'flds' : [
         'BEST_ASK',
         'BEST_BID'
-        ],
-    'start_date' : '2020-03-01',
-    'end_date' : '2020-03-31'
+        ]
 }
 
 
