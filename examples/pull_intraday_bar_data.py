@@ -33,8 +33,8 @@ def download_intraday_bar(ticker: str, settings: dict = BDIB_PARAMS) -> pd.DataF
     r"""
     Download intraday bar data from the Bloomberg API using the BDIB() function
 
-    :param settings: The ticker for which we want to download intraday bar data
-    :type settings: str
+    :param ticker: The ticker for which we want to download intraday bar data
+    :type ticker: str
     :param settings: A dictionary with non-ticker parameters for a call to Bloomberg BDIB function, with keys matching the BDIB parameter names
     :type settings: dict 
     :return: DataFrame containing data returned by Bloomberg
