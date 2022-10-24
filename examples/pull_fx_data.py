@@ -24,15 +24,18 @@ BDIB_SESSION = 'allday'
 # ref: BDIB reference exchange parameter, I'm using IndexUS when the xbbg default exchange lookup fails
 BDIB_REF_EXCH = 'IndexUS'
 
+# The number of days of data we want to pull up to our data end date, the business day previous to the code's execution date
+DAYS_BACK = 2
 
-def download_intraday_bar(ticker: str, event: str, date: str, session: str = 'allday') -> pd.DataFrame:
+
+def download_fx_intraday_data(ticker: str, typ: str, dt: str, session: str = 'allday') -> pd.DataFrame:
     r"""
     Download intraday bar data from the Bloomberg API using the BDIB() function
 
     :param ticker: The ticker for which we want to download intraday bar data
     :type ticker: str
-    :param event: BDIB event type parameter, one of [TRADE, BID, ASK, BID_BEST, ASK_BEST, BEST_BID, BEST_ASK]
-    :type event: str 
+    :param typ: BDIB event type parameter, one of [TRADE, BID, ASK, BID_BEST, ASK_BEST, BEST_BID, BEST_ASK]
+    :type typ: str 
     :param session: BDIB session parameter, one of [allday, day, am, pm, pre, post])
     :type session: str 
     :param dt: BDIB dt parameter, date of intraday bar data we want to download formatted as 'YYYY-MM-DD' string
@@ -42,9 +45,9 @@ def download_intraday_bar(ticker: str, event: str, date: str, session: str = 'al
     """
 
     try:
-        bar_df = blp.bdib(ticker=ticker, typ=event, dt=date, session=session)
+        bar_df = blp.bdib(ticker=ticker, typ=typ, dt=dt, session=session)
     except:
-        bar_df = blp.bdib(ticker=ticker, typ=event, dt=date, session=session, ref=BDIB_REF_EXCH)
+        bar_df = blp.bdib(ticker=ticker, typ=typ, dt=dt, session=session, ref=BDIB_REF_EXCH)
 
     return bar_df
 
@@ -60,8 +63,11 @@ def date_range(start: str, end: str):
     :rtype: Iterator[str]
     """
 
-    for num_days in range(int((end+1) - start).days):
-        yield start_date + datetime.timedelta(days=num_days)
+    start_date = datetime.datetime.strptime(start,'%Y-%m-%d').date()
+    end_date = datetime.datetime.strptime(end,'%Y-%m-%d').date()
+
+    for num_days in range(int(((end_date+datetime.timedelta(days=1)) - start_date).days)):
+        yield (start_date + datetime.timedelta(days=num_days)).strftime('%Y-%m-%d')
 
 
 if __name__ == "__main__":
@@ -72,18 +78,20 @@ if __name__ == "__main__":
     # get dates to use for our BDIB call, a year of data ending on the previous business day
     anchor_date = pd.tseries.offsets.BDay(-1).apply(pd.datetime.today())
     end_date = anchor_date.strftime('%Y-%m-%d')
-    start_date = (anchor_date - datetime.timedelta(days=365)).strftime('%Y-%m-%d')
+    start_date = (anchor_date - datetime.timedelta(days=DAYS_BACK)).strftime('%Y-%m-%d')
 
     # iterate over dates, tickers, events to call BDIB
     for each_date in date_range(start=start_date, end=end_date):
-        for ticker in G10_CURRENCIES:
+        print(each_date)
+        for ticker in G10_CURRENCIES[:2]:
             for event in BDIB_TYPES:
-                # Use the default FX_PARAMS to download metadata for a small number of tickers
-                fx_intraday_data = download_fx_intraday_data(ticker=ticker, event=event, dt=each_date, session=BDIB_SESSION)
+                # # Use the default FX_PARAMS to download metadata for a small number of tickers
+                # fx_intraday_data = download_fx_intraday_data(ticker=ticker, typ=event, dt=each_date, session=BDIB_SESSION)
+                # print('Sample of fx intraday data:\n',fx_intraday_data.head(3),'\n')
 
-                # Download the last traded price & market cap dataset to a CSV file, using pandas.DataFrame's to_csv() method
-                filename = 'fx_intraday_' + FX_PARAMS['start_date'] + '_' + FX_PARAMS['end_date'] + '.csv'
-                fx_intraday_data.to_csv(TMP_DIR + filename)
+    # # Download final dataset to CSV file
+    # filename = 'fx_g10_intraday_' + start_date + '_' + end_date + '.csv'
+    # fx_intraday_data.to_csv(TMP_DIR + filename)
 
-                # Print the first 3 records from the DataFrame to stdout.
-                print('Sample of fx intraday data:\n',fx_intraday_data.head(3),'\n')
+    # # Print the first 3 records from the DataFrame to stdout.
+    # print('Sample of fx intraday data:\n',fx_intraday_data.head(3),'\n')
