@@ -42,9 +42,9 @@ def download_intraday_bar(ticker: str, settings: dict = BDIB_PARAMS) -> pd.DataF
     """
 
     try:
-        bar_df = blp.bdib(ticker, **settings)
+        bar_df = blp.bdib(ticker=ticker, **settings)
     except:
-        bar_df = blp.bdib(ticker, **settings, ref=BDIB_REF_EXCH)
+        bar_df = blp.bdib(ticker=ticker, **settings, ref=BDIB_REF_EXCH)
 
     return bar_df
 
