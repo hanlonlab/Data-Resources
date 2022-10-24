@@ -56,7 +56,7 @@ if __name__ == "__main__":
         bar_data = download_intraday_bar(ticker, settings=BDIB_PARAMS)
 
         # Download the intraday bar dataframe to file
-        filename = 'intraday_bar_' + ticker + '_' + '_'.join(str(param) for param in BDIB_PARAMS.values()) + '.csv'
+        filename = 'intraday_bar_' + ticker.split()[0] + '_' + '_'.join(str(param).lower() for param in BDIB_PARAMS.values()) + '.csv'
         bar_data.to_csv(TMP_DIR + filename)
 
         # Print the first 3 records from the DataFrame to stdout.
