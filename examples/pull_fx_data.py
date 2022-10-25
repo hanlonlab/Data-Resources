@@ -86,7 +86,7 @@ if __name__ == "__main__":
     # iterate over dates, tickers, events to call BDIB
     df_list = []
     for each_date in date_range(start=start_date, end=end_date):
-        for ticker in currency_pairs[:3]:
+        for ticker in currency_pairs:
             for event in BDIB_TYPES:
 
                 fx_intraday_data = download_fx_intraday_data(ticker=ticker, typ=event, dt=each_date, session=BDIB_SESSION)
@@ -94,22 +94,17 @@ if __name__ == "__main__":
                 if fx_intraday_data.empty:
                     print('DataFrame for',each_date,ticker,event,'is empty.')
                 else:
-                    print(each_date,ticker,event)
-                    print('Sample of fx intraday data:\n',fx_intraday_data.head(3),'\n')
-                    
-                    mean_num_trds = str(int(fx_intraday_data['num_trds'].mean()))
-                    fx_close_data = pd.DataFrame(fx_intraday_data['close'])
+                    mean_num_trds = str(int(fx_intraday_data[ticker,'num_trds'].mean()))
+                    fx_close_data = pd.DataFrame(fx_intraday_data[ticker,'close'])
                     fx_close_data.columns = [(ticker + '_' + event + '_' + mean_num_trds).lower().replace(' ','_')]
-                    df_list = df_list.append(fx_close_data)
+                    df_list.append(fx_close_data)
 
-                    print('Sample of fx close data:\n',fx_close_data.head(3),'\n')
+    # Concatenate DataFrames to a single DataFrame to save to CSV
+    all_fx_intraday_data = pd.concat(df_list, axis=1)
 
-    # # Concatenate DataFrames to a single DataFrame to save to CSV
-    # all_fx_intraday_data = pd.concat(df_list, axis=1)
+    # Download final dataset to CSV file
+    filename = 'fx_g10_intraday_' + start_date + '_' + end_date + '.csv'
+    all_fx_intraday_data.to_csv(TMP_DIR + filename)
 
-    # # Download final dataset to CSV file
-    # filename = 'fx_g10_intraday_' + start_date + '_' + end_date + '.csv'
-    # all_fx_intraday_data.to_csv(TMP_DIR + filename)
-
-    # # Print the first 3 records from the DataFrame to stdout.
-    # print('Sample of fx intraday data:\n',all_fx_intraday_data.head(3),'\n')
+    # Print the first 3 records from the DataFrame to stdout.
+    print('Sample of fx intraday data:\n',all_fx_intraday_data.head(3),'\n')
