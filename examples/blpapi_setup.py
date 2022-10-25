@@ -45,6 +45,19 @@ def pandas_dependency():
         subprocess.run(cmd_args, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
 
+def kaiko_dependency():
+    r"""
+    If importing the kaiko library fails, download it using python3's pip module.
+    """
+
+    try:
+        import kaiko
+    except:
+        cmd_args = [sys.executable,'-m','pip','install','--user','kaiko']
+        subprocess.run(cmd_args, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+
+
+
 def other_dependency(lib: str):
     r"""
     If importing a module or library fails, download it using by name using python3's pip module. Note this pattern may not work for every importable object.
