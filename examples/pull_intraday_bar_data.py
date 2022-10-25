@@ -33,8 +33,8 @@ def download_intraday_bar(ticker: str, settings: dict = BDIB_PARAMS) -> pd.DataF
     r"""
     Download intraday bar data from the Bloomberg API using the BDIB() function
 
-    :param settings: The ticker for which we want to download intraday bar data
-    :type settings: str
+    :param ticker: The ticker for which we want to download intraday bar data
+    :type ticker: str
     :param settings: A dictionary with non-ticker parameters for a call to Bloomberg BDIB function, with keys matching the BDIB parameter names
     :type settings: dict 
     :return: DataFrame containing data returned by Bloomberg
@@ -42,9 +42,9 @@ def download_intraday_bar(ticker: str, settings: dict = BDIB_PARAMS) -> pd.DataF
     """
 
     try:
-        bar_df = blp.bdib(ticker, **settings)
+        bar_df = blp.bdib(ticker=ticker, **settings)
     except:
-        bar_df = blp.bdib(ticker, **settings, ref=BDIB_REF_EXCH)
+        bar_df = blp.bdib(ticker=ticker, **settings, ref=BDIB_REF_EXCH)
 
     return bar_df
 
@@ -56,7 +56,7 @@ if __name__ == "__main__":
         bar_data = download_intraday_bar(ticker, settings=BDIB_PARAMS)
 
         # Download the intraday bar dataframe to file
-        filename = 'intraday_bar_' + ticker + '_' + '_'.join(str(param) for param in BDIB_PARAMS.values()) + '.csv'
+        filename = 'intraday_bar_' + ticker.split()[0] + '_' + '_'.join(str(param).lower() for param in BDIB_PARAMS.values()) + '.csv'
         bar_data.to_csv(TMP_DIR + filename)
 
         # Print the first 3 records from the DataFrame to stdout.
