@@ -65,7 +65,10 @@ def new_mkt_data_request(mkt_data_type: str, ref_cols: bool = True) -> int:
     """
 
     params = kaiko_config[mkt_data_type]
-    get_url = MKT_API_CONFIG['base_url'] + MKT_API_CONFIG['version'] + '/data/{commodity}.{data_version}/exchanges/{exchange}/{instrument_class}/{instrument}/{request_type}?start_time={start_time}&end_time={end_time}&page_size={page_size}'.format(**params)
+    if mkt_data_type='trades':
+        get_url = MKT_API_CONFIG['base_url'] + MKT_API_CONFIG['version'] + '/data/{commodity}.{data_version}/exchanges/{exchange}/{instrument_class}/{instrument}/{request_type}?start_time={start_time}&end_time={end_time}&page_size={page_size}'.format(**params)
+    elif mkt_data_type='ohlcv':
+        get_url = MKT_API_CONFIG['base_url'] + MKT_API_CONFIG['version'] + '/data/{commodity}.{data_version}/exchanges/{exchange}/{instrument_class}/{instrument}/{request_type}?start_time={start_time}&end_time={end_time}&page_size={page_size}&interval={interval}'.format(**params)
 
     with requests.Session() as s:
         # authenicate to api, get token
