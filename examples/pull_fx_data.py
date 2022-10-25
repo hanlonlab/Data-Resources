@@ -25,7 +25,7 @@ BDIB_SESSION = 'allday'
 BDIB_REF_EXCH = 'IndexUS'
 
 # The number of days of data we want to pull, ending with our anchor date
-DAYS_BACK = 2
+DAYS_BACK = 7
 
 # The business day offset from our code's execution date to which we want to set our anchor date (our code's end date)
 ANCHOR_DATE_BDAY_OFFSET = -1
@@ -105,6 +105,3 @@ if __name__ == "__main__":
     # Download final dataset to CSV file
     filename = 'fx_g10_intraday_' + start_date + '_' + end_date + '.csv'
     all_fx_intraday_data.to_csv(TMP_DIR + filename)
-
-    # Print the first 3 records from the DataFrame to stdout.
-    print('Sample of fx intraday data:\n',all_fx_intraday_data.head(3),'\n')
