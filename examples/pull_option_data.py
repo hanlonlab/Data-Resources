@@ -55,7 +55,7 @@ def filter_securities(settings: dict = OPT_PARAMS, max_days: int = MAX_DAYS, per
         
         filtered_opts = []
 
-        for sym in ticker_opt_chain[:10]:
+        for sym in ticker_opt_chain:
 
             # split options of the form "AAPL US 02/17/23 P175 Equity" to pull days to expiration and strike price
             days_to_expiration = int((pd.to_datetime(sym.split(' ')[2]) - pd.to_datetime('today')).days)

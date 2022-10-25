@@ -24,8 +24,11 @@ BDIB_SESSION = 'allday'
 # ref: BDIB reference exchange parameter, I'm using IndexUS when the xbbg default exchange lookup fails
 BDIB_REF_EXCH = 'IndexUS'
 
-# The number of days of data we want to pull up to our data end date, the business day previous to the code's execution date
+# The number of days of data we want to pull, ending with our anchor date
 DAYS_BACK = 2
+
+# The business day offset from our code's execution date to which we want to set our anchor date (our code's end date)
+ANCHOR_DATE_BDAY_OFFSET = -1
 
 
 def download_fx_intraday_data(ticker: str, typ: str, dt: str, session: str = 'allday') -> pd.DataFrame:
@@ -72,26 +75,41 @@ def date_range(start: str, end: str):
 
 if __name__ == "__main__":
 
-    # combine G10 currencies into pairs by filtering the G10 X G10 Cartesian product using list comprehension
-    currency_pairs = sorted([[a,b] for a,b in itertools.product(G10_CURRENCIES, repeat=2) if a!=b])[26:]
+    # combine G10 currencies into pairs by filtering the G10 X G10 Cartesian product using list comprehension, combining to Bloomberg Cross Spot Rate tickers like "EURAUD Curncy"
+    currency_pairs = sorted([(a.strip().upper() + b.strip().upper() + ' Curncy') for a,b in itertools.product(G10_CURRENCIES, repeat=2) if a!=b])[26:]
 
     # get dates to use for our BDIB call, a year of data ending on the previous business day
-    anchor_date = pd.tseries.offsets.BDay(-1).apply(pd.datetime.today())
+    anchor_date = datetime.datetime.today() + pd.tseries.offsets.BusinessDay(ANCHOR_DATE_BDAY_OFFSET)
     end_date = anchor_date.strftime('%Y-%m-%d')
     start_date = (anchor_date - datetime.timedelta(days=DAYS_BACK)).strftime('%Y-%m-%d')
 
     # iterate over dates, tickers, events to call BDIB
+    df_list = []
     for each_date in date_range(start=start_date, end=end_date):
-        print(each_date)
-        for ticker in G10_CURRENCIES[:2]:
+        for ticker in currency_pairs[:3]:
             for event in BDIB_TYPES:
-                # # Use the default FX_PARAMS to download metadata for a small number of tickers
-                # fx_intraday_data = download_fx_intraday_data(ticker=ticker, typ=event, dt=each_date, session=BDIB_SESSION)
-                # print('Sample of fx intraday data:\n',fx_intraday_data.head(3),'\n')
+
+                fx_intraday_data = download_fx_intraday_data(ticker=ticker, typ=event, dt=each_date, session=BDIB_SESSION)
+                
+                if fx_intraday_data.empty:
+                    print('DataFrame for',each_date,ticker,event,'is empty.')
+                else:
+                    print(each_date,ticker,event)
+                    print('Sample of fx intraday data:\n',fx_intraday_data.head(3),'\n')
+                    
+                    mean_num_trds = str(int(fx_intraday_data['num_trds'].mean()))
+                    fx_close_data = pd.DataFrame(fx_intraday_data['close'])
+                    fx_close_data.columns = [(ticker + '_' + event + '_' + mean_num_trds).lower().replace(' ','_')]
+                    df_list = df_list.append(fx_close_data)
+
+                    print('Sample of fx close data:\n',fx_close_data.head(3),'\n')
+
+    # # Concatenate DataFrames to a single DataFrame to save to CSV
+    # all_fx_intraday_data = pd.concat(df_list, axis=1)
 
     # # Download final dataset to CSV file
     # filename = 'fx_g10_intraday_' + start_date + '_' + end_date + '.csv'
-    # fx_intraday_data.to_csv(TMP_DIR + filename)
+    # all_fx_intraday_data.to_csv(TMP_DIR + filename)
 
     # # Print the first 3 records from the DataFrame to stdout.
-    # print('Sample of fx intraday data:\n',fx_intraday_data.head(3),'\n')
+    # print('Sample of fx intraday data:\n',all_fx_intraday_data.head(3),'\n')
