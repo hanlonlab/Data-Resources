@@ -6,7 +6,6 @@ from xbbg import blp
 import pandas as pd
 import datetime
 import itertools
-#from pandas.tseries.offsets import BDay
 
 
 # A directory for files that are not tracked by git, to which we'll download data
@@ -21,7 +20,7 @@ BDIB_TYPES = ['BEST_ASK','BEST_BID']
 # session: BDIB session parameter, one of [allday, day, am, pm, pre, post])
 BDIB_SESSION = 'allday'
 
-# ref: BDIB reference exchange parameter, I'm using IndexUS when the xbbg default exchange lookup fails
+# ref: BDIB reference exchange parameter, IndexUS will be used when xbbg default exchange lookup fails
 BDIB_REF_EXCH = 'IndexUS'
 
 # The number of days of data we want to pull, ending with our anchor date
@@ -76,7 +75,7 @@ def date_range(start: str, end: str):
 if __name__ == "__main__":
 
     # combine G10 currencies into pairs by filtering the G10 X G10 Cartesian product using list comprehension, combining to Bloomberg Cross Spot Rate tickers like "EURAUD Curncy"
-    currency_pairs = sorted([(a.strip().upper() + b.strip().upper() + ' Curncy') for a,b in itertools.product(G10_CURRENCIES, repeat=2) if a!=b])[26:]
+    currency_pairs = sorted([(a.strip().upper() + b.strip().upper() + ' Curncy') for a,b in itertools.product(G10_CURRENCIES, repeat=2) if a!=b])
 
     # get dates to use for our BDIB call, a year of data ending on the previous business day
     anchor_date = datetime.datetime.today() + pd.tseries.offsets.BusinessDay(ANCHOR_DATE_BDAY_OFFSET)
