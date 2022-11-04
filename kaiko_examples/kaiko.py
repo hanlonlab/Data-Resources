@@ -26,7 +26,6 @@ Data Dictionary -> https://www.kaiko.com/pages/cryptocurrency-data-types
 Kaiko-maintained Python API -> https://github.com/sgheb/kaiko-api
 """
 
-# TODO assert CRED_PATH is 644, same as .pgpass does
 HOME_PATH = os.path.expanduser('~')
 CRED_PATH = HOME_PATH + '/.kaikopass'  # api credentials stored as string in format "kaikoapi:apikey"
 with open(CRED_PATH, 'r') as f:
@@ -35,24 +34,27 @@ with open(CRED_PATH, 'r') as f:
 
 # set up global vars
 TMP_DIR = '../tmp/'
+
 MKT_API_CONFIG = {
     'base_url': 'https://us.market-api.kaiko.io/',
     'version': 'v2',
     'headers': {'Accept': 'application/json','X-Api-Key': API_KEY}
 }
+
 REF_API_CONFIG = {
     'base_url': 'https://reference-data-api.kaiko.io/',
     'version': 'v1',
     'headers': {'Accept': 'application/json'}
 }
+
 VALID_REFERENCE_TYPES = ['assets','exchanges','instruments','pools']
-VALID_MKT_DATA_TYPES = ['trades','ohlcv']
+VALID_MKT_DATA_TYPES = ['trades','ohlcv','order_book']
 VALID_ARG_LENS = {
     'new': [3],
     'list': [3,4]
 }
 
-# get request information from kaiko config file
+# get postgres database username from kaiko.conf file, password stored in .pgpass file
 KAIKO_CONFIG_PATH = './config/kaiko.conf'
 with open(KAIKO_CONFIG_PATH) as file:
     kaiko_config = json.load(file)
@@ -65,47 +67,54 @@ def new_mkt_data_request(mkt_data_type: str, ref_cols: bool = True) -> int:
     """
 
     params = kaiko_config[mkt_data_type]
-    if mkt_data_type=='trades':
+    if mkt_data_type == 'trades':
         get_url = MKT_API_CONFIG['base_url'] + MKT_API_CONFIG['version'] + '/data/{commodity}.{data_version}/exchanges/{exchange}/{instrument_class}/{instrument}/{request_type}?start_time={start_time}&end_time={end_time}&page_size={page_size}'.format(**params)
-    elif mkt_data_type=='ohlcv':
+    elif mkt_data_type == 'ohlcv':
         get_url = MKT_API_CONFIG['base_url'] + MKT_API_CONFIG['version'] + '/data/{commodity}.{data_version}/exchanges/{exchange}/{instrument_class}/{instrument}/{request_type}?start_time={start_time}&end_time={end_time}&page_size={page_size}&interval={interval}'.format(**params)
+    elif mkt_data_type == 'order_book':
+        get_url = MKT_API_CONFIG['base_url'] + MKT_API_CONFIG['version'] + '/data/{commodity}.{data_version}/exchanges/{exchange}/{instrument_class}/{instrument}/{request_type}?start_time={start_time}&end_time={end_time}&page_size={page_size}&limit_orders={limit_orders}&slippage={slippage}&slippage_ref={slippage_ref}'.format(**params)
+    else: # rely on API defaults
+        get_url = MKT_API_CONFIG['base_url'] + MKT_API_CONFIG['version'] + '/data/{commodity}.{data_version}/exchanges/{exchange}/{instrument_class}/{instrument}/{request_type}?start_time={start_time}&end_time={end_time}&page_size={page_size}'.format(**params)
+
 
     with requests.Session() as s:
         # authenicate to api, get token
-        r = s.request(method='GET', url=get_url, headers=MKT_API_CONFIG['headers'])
+        with s.request(method='GET', url=get_url, headers=MKT_API_CONFIG['headers'], stream=True) as r:
+            # set filename for downloaded data
+            export_path = TMP_DIR + mkt_data_type + '_{exchange}_{instrument_class}_{instrument}_{start_time}_{end_time}.csv'.format(**params).replace(':','')
 
-        # set filename for downloaded data
-        export_path = TMP_DIR + mkt_data_type + '_{exchange}_{instrument_class}_{instrument}_{start_time}_{end_time}.csv'.format(**params).replace(':','')
-
-        # download data
-        response = json.loads(r.content)
-        ref_headers = 'commodity,exchange,instrument_class,instrument,'.format(**params)
-        ref_data = '{commodity},{exchange},{instrument_class},{instrument},'.format(**params)
-
-        # write first page
-        if ref_cols:
-            with open(export_path, 'w') as file:
-                file.write(ref_headers + ','.join(list(response['data'][0].keys())) + '\n')
-                for record in response['data']:
-                    file.write(ref_data + ','.join([str(val) for val in record.values()]) + '\n')
-        else:
-            with open(export_path, 'w') as file:
-                file.write(','.join(list(response['data'][0].keys())) + '\n')
-                for record in response['data']:
-                    file.write(','.join([str(val) for val in record.values()]) + '\n')
-
-        # write subsequent pages
-        while 'next_url' in response:
-            r = s.request(method='GET', url=response['next_url'], headers=MKT_API_CONFIG['headers'])
+            # download data
             response = json.loads(r.content)
+            ref_headers = 'commodity,exchange,instrument_class,instrument,'.format(**params)
+            ref_data = '{commodity},{exchange},{instrument_class},{instrument},'.format(**params)
+
+            # write first page
             if ref_cols:
-                with open(export_path, 'a') as file:
+                with open(export_path, 'w') as file:
+                    file.write(ref_headers + ','.join(list(response['data'][0].keys())) + '\n')
                     for record in response['data']:
                         file.write(ref_data + ','.join([str(val) for val in record.values()]) + '\n')
             else:
-                with open(export_path, 'a') as file:
+                with open(export_path, 'w') as file:
+                    file.write(','.join(list(response['data'][0].keys())) + '\n')
                     for record in response['data']:
                         file.write(','.join([str(val) for val in record.values()]) + '\n')
+
+        # write subsequent pages
+        while 'next_url' in response:
+            try:
+                with s.request(method='GET', url=response['next_url'], headers=MKT_API_CONFIG['headers'], stream=True) as r:
+                    response = json.loads(r.content)
+                    if ref_cols:
+                        with open(export_path, 'a') as file:
+                            for record in response['data']:
+                                file.write(ref_data + ','.join([str(val) for val in record.values()]) + '\n')
+                    else:
+                        with open(export_path, 'a') as file:
+                            for record in response['data']:
+                                file.write(','.join([str(val) for val in record.values()]) + '\n')
+            except:
+                print(response['next_url'],r.url,r.status_code,r.reason,'\n',r.request)
 
     return 0
 
